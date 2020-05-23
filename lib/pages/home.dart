@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plasteringtimer/services/wall_time.dart';
 
 class Home extends StatelessWidget {
   @override
@@ -22,9 +21,8 @@ class Home extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () { 
-          WallTime wall = WallTime('Wall Drying');
           Navigator.pushReplacementNamed(context, '/wall', arguments: {
-            'name': wall.name
+            'name': 'Wall Drying'
           });
         },
         backgroundColor: Colors.green[600],
