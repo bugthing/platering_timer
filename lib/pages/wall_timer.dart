@@ -12,7 +12,6 @@ class _WallTimerState extends State<WallTimer> {
   WallTime wall = WallTime();
   Map data = {};
   Timer _timer;
-  int _seconds = 0;
   IconData icon = Icons.play_arrow;
 
   void startTimer() {
@@ -38,19 +37,14 @@ class _WallTimerState extends State<WallTimer> {
     data = data.isNotEmpty ? data : ModalRoute.of(context).settings.arguments;
     wall.name = data['name'];
 
-    if ( wall.isNewStage() ) {
+    if ( wall.isNewStage ) {
       print("Play sounds, just moved onto next stage");
     }
 
     List<Widget> rows = wall.stages.map((stage) {
       return Text(
-        stage['title'],
-        style: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 2.0,
-        )
-      );
+        "${ stage.title } -- ${stage.summary}", 
+        style: TextStyle(color: stage.isActive ? Colors.green : Colors.grey));
     }).toList();
 
     return Scaffold(
@@ -83,13 +77,13 @@ class _WallTimerState extends State<WallTimer> {
               if ( _timer != null && _timer.isActive ) {
                 _timer.cancel();
               } else {
-                icon = Icons.pause;
                 startTimer();
               }
             },
             backgroundColor: Colors.green[600],
             child: Icon(icon),
           ),
+          Text("${wall.countDown}"),
         ]
       )
     );

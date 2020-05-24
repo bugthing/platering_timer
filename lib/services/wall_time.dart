@@ -1,8 +1,49 @@
+class Stage {
+  Map data;
+  int secondsPast;
+
+  String get title {
+    return data['title'];
+  }
+
+  String get summary {
+    int secsPast = secondsExpired < 0 ? 0 : secondsExpired;
+    if ( secsPast > lengthSecs) secsPast = lengthSecs;
+    return "$secsPast of $lengthSecs -- (${secondsExpired})";
+  }
+
+  int get totalSecs {
+    return data['totalSecs'];
+  }
+
+  int get lengthSecs {
+    return data['secs'];
+  }
+
+  int get secondsExpired {
+    return secondsPast - (totalSecs - lengthSecs);
+  }
+
+  bool get hasStarted {
+    return secondsExpired > 0;
+  }
+
+  bool get hasExpired {
+    return secondsPast > totalSecs;
+  }
+
+  bool get isActive {
+    return hasStarted && !hasExpired;
+  }
+
+  Stage(this.data, this.secondsPast) {
+  }
+}
 
 class WallTime {
   String name;
   int seconds = 0;
-  List<Map> stages = [
+  List<Map> _stages = [
     {
       "title": "Applying Plaster",
       //"secs": 1800
@@ -46,12 +87,33 @@ class WallTime {
       "secs": 900
     },
   ];
-  
-  WallTime() { // Initialization code goes here.
 
+  Stage get current {
+    return stages.firstWhere((stage) => stage.hasStarted && !stage.hasExpired, orElse: () => stages.last);
+  }
+
+  List<Stage> get stages {
+    return _stages.map((stage) {
+      return new Stage(stage, seconds);
+    }).toList();
+  }
+
+  bool get hasFinished {
+    return current ==_stages.last && current.hasExpired;
+  }
+
+  bool get isNewStage {
+    return current.secondsExpired == 0;
+  }
+
+  String get countDown {
+    return "$seconds secs gone of ${ stages.last.totalSecs }";
+  }
+
+  WallTime() { // Initialization code goes here.
     // Calculate each stage totalSecs
     int totalSecs = 0;
-    stages.forEach((stage) {
+    _stages.forEach((stage) {
       totalSecs += stage['secs'];
       stage['totalSecs'] = totalSecs;
      });
@@ -59,25 +121,5 @@ class WallTime {
 
   void tick([int secs = 1]) {
     this.seconds += secs;
-  }
-
-  bool isFinished() {
-    return current() == stages.last && current()['totalSecs'] < this.seconds;
-  }
-
-  bool isNewStage() {
-    return this.seconds > 0 && current()['totalSecs'] == this.seconds;
-  }
-
-  Map current() {
-    return stages.firstWhere((stage) => stage['totalSecs'] >= this.seconds, orElse: () => stages.last);
-  }
-
-  String currentTitle() {
-    return current()['title'];
-  }
-
-  String title() {
-    return "$seconds - ${ currentTitle() }";
   }
 }
