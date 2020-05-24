@@ -42,53 +42,56 @@ class _WallTimerState extends State<WallTimer> {
       print("Play sounds, just moved onto next stage");
     }
 
+    List<Widget> rows = wall.stages.map((stage) {
+      return Text(
+        stage['title'],
+        style: TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 2.0,
+        )
+      );
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
           title: Text(wall.name),
           centerTitle: true,
           backgroundColor: Colors.blue[600]
       ),
-      body: Container(
-        child: Column(
-          children: [ 
-            Row(
-              children: [
-                Text(
-                  wall.title(),
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 2.0,
-                  )
-                ),
-               ]
-            ),
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(icon),
-                  onPressed: () {
-                    if ( _timer != null && _timer.isActive ) {
-                      _timer.cancel();
-                    } else {
-                      // start pressed
-                      icon = Icons.pause;
-                      startTimer();
-                    }
-                  },
-                ),
-              ]
-            ) 
-           ]
-        )
+      body: GridView.count(
+        crossAxisCount: 1,
+        childAspectRatio: 8,
+        controller: new ScrollController(keepScrollOffset: false),
+        shrinkWrap: true,
+        scrollDirection: Axis.vertical,
+        children: rows
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () { 
-          Navigator.pushReplacementNamed(context, '/');
-        },
-        backgroundColor: Colors.red[600],
-        child: Text('Stop'),
-      ),
+      floatingActionButton: Row(
+        children: [
+          FloatingActionButton(
+            heroTag: null,
+            onPressed: () { 
+              Navigator.pushReplacementNamed(context, '/');
+            },
+            backgroundColor: Colors.red[600],
+            child: Text('Stop'),
+          ),
+          FloatingActionButton(
+            heroTag: null,
+            onPressed: () { 
+              if ( _timer != null && _timer.isActive ) {
+                _timer.cancel();
+              } else {
+                icon = Icons.pause;
+                startTimer();
+              }
+            },
+            backgroundColor: Colors.green[600],
+            child: Icon(icon),
+          ),
+        ]
+      )
     );
   }
 }
