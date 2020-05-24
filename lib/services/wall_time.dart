@@ -9,7 +9,7 @@ class Stage {
   String get summary {
     int secsPast = secondsExpired < 0 ? 0 : secondsExpired;
     if ( secsPast > lengthSecs) secsPast = lengthSecs;
-    return "$secsPast of $lengthSecs -- (${secondsExpired})";
+    return "${ secsToMMSS(secsPast) } of ${ secsToMMSS(lengthSecs) }";
   }
 
   int get totalSecs {
@@ -37,6 +37,18 @@ class Stage {
   }
 
   Stage(this.data, this.secondsPast) {
+  }
+
+  String secsToMMSS(int secs) {
+    Duration duration = Duration(seconds: secs);
+    String twoDigits(int n) {
+      if (n >= 10) return "$n";
+      return "0$n";
+    }
+
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }
 

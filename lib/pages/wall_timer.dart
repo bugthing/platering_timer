@@ -12,7 +12,6 @@ class _WallTimerState extends State<WallTimer> {
   WallTime wall = WallTime();
   Map data = {};
   Timer _timer;
-  IconData icon = Icons.play_arrow;
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -24,6 +23,10 @@ class _WallTimerState extends State<WallTimer> {
         },
       ),
     );
+  }
+
+  void stopTimer() {
+    setState( () { _timer.cancel(); });
   }
 
   @override
@@ -41,10 +44,20 @@ class _WallTimerState extends State<WallTimer> {
       print("Play sounds, just moved onto next stage");
     }
 
+    IconData icon = Icons.play_arrow;
+    if ( _timer != null && _timer.isActive) icon = Icons.pause;
+
     List<Widget> rows = wall.stages.map((stage) {
-      return Text(
-        "${ stage.title } -- ${stage.summary}", 
-        style: TextStyle(color: stage.isActive ? Colors.green : Colors.grey));
+      return Column(children: <Widget>[
+        Text(
+          stage.title, 
+          style: TextStyle(color: stage.isActive ? Colors.green : (stage.hasExpired ? Colors.grey : Colors.purple), fontSize: 20.0),
+        ),
+        Text(
+          stage.summary,
+          style: TextStyle(color: stage.isActive ? Colors.black : Colors.grey, fontSize: 20.0)
+        ),
+      ]);
     }).toList();
 
     return Scaffold(
@@ -75,7 +88,7 @@ class _WallTimerState extends State<WallTimer> {
             heroTag: null,
             onPressed: () { 
               if ( _timer != null && _timer.isActive ) {
-                _timer.cancel();
+                stopTimer();
               } else {
                 startTimer();
               }
