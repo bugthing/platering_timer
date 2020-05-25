@@ -44,9 +44,6 @@ class _WallTimerState extends State<WallTimer> {
       print("Play sounds, just moved onto next stage");
     }
 
-    IconData icon = Icons.play_arrow;
-    if ( _timer != null && _timer.isActive) icon = Icons.pause;
-
     List<Widget> rows = wall.stages.map((stage) {
       return Column(children: <Widget>[
         Text(
@@ -66,39 +63,63 @@ class _WallTimerState extends State<WallTimer> {
           centerTitle: true,
           backgroundColor: Colors.blue[600]
       ),
-      body: GridView.count(
-        crossAxisCount: 1,
-        childAspectRatio: 8,
-        controller: new ScrollController(keepScrollOffset: false),
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: rows
-      ),
-      floatingActionButton: Row(
-        children: [
-          FloatingActionButton(
-            heroTag: null,
-            onPressed: () { 
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            backgroundColor: Colors.red[600],
-            child: Text('Stop'),
+      body: CustomScrollView(
+          slivers: <Widget>[
+            SliverAppBar(
+              title: Container(
+                child: Column(
+                  children: [
+                    Text( "${wall.countDown}"),
+                    Text( "${wall.summary}"),
+                  ]
+                )
+              ),
+              floating: true,
+              expandedHeight: 100,
+              centerTitle: true,
+              stretch: true,
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  if (index >= rows.length) return null;
+                  return rows[index];
+               },
+              )
+            ),
+          ],
+        ),
+      floatingActionButton:Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: FloatingActionButton(
+              heroTag: null,
+              onPressed: () { 
+                Navigator.pushReplacementNamed(context, '/');
+              },
+              backgroundColor: Colors.red[600],
+              child: Text('Stop'),
+            ),
           ),
-          FloatingActionButton(
-            heroTag: null,
-            onPressed: () { 
-              if ( _timer != null && _timer.isActive ) {
-                stopTimer();
-              } else {
-                startTimer();
-              }
-            },
-            backgroundColor: Colors.green[600],
-            child: Icon(icon),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton(
+              heroTag: null,
+              onPressed: () { 
+                if ( _timer != null && _timer.isActive ) {
+                  stopTimer();
+                } else {
+                  startTimer();
+                }
+              },
+              backgroundColor: Colors.green[600],
+              child: Icon( ( _timer != null && _timer.isActive) ? Icons.pause : Icons.play_arrow ),
+            ),
           ),
-          Text("${wall.countDown}"),
         ]
-      )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }

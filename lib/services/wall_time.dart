@@ -1,3 +1,29 @@
+class DisplaySecs {
+  int seconds;
+
+  Duration get duration {
+    return Duration(seconds: seconds);
+  }
+
+  String get mmss {
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
+  }
+
+  String get hhmmss {
+    String twoDigitHours = twoDigits(duration.inHours.remainder(60));
+    return "$twoDigitHours:$mmss";
+  }
+
+  String twoDigits(int n) {
+    if (n >= 10) return "$n";
+    return "0$n";
+  }
+
+  DisplaySecs(this.seconds);
+}
+
 class Stage {
   Map data;
   int secondsPast;
@@ -9,7 +35,7 @@ class Stage {
   String get summary {
     int secsPast = secondsExpired < 0 ? 0 : secondsExpired;
     if ( secsPast > lengthSecs) secsPast = lengthSecs;
-    return "${ secsToMMSS(secsPast) } of ${ secsToMMSS(lengthSecs) }";
+    return "${ DisplaySecs(secsPast).mmss } of ${ DisplaySecs(lengthSecs).mmss }";
   }
 
   int get totalSecs {
@@ -36,25 +62,14 @@ class Stage {
     return hasStarted && !hasExpired;
   }
 
-  Stage(this.data, this.secondsPast) {
-  }
+  Stage(this.data, this.secondsPast);
 
-  String secsToMMSS(int secs) {
-    Duration duration = Duration(seconds: secs);
-    String twoDigits(int n) {
-      if (n >= 10) return "$n";
-      return "0$n";
-    }
-
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$twoDigitMinutes:$twoDigitSeconds";
-  }
 }
 
 class WallTime {
   String name;
   int seconds = 0;
+  DateTime startTime;
   List<Map> _stages = [
     {
       "title": "Applying Plaster",
@@ -119,7 +134,18 @@ class WallTime {
   }
 
   String get countDown {
-    return "$seconds secs gone of ${ stages.last.totalSecs }";
+    return "${ DisplaySecs(seconds).hhmmss } / ${ DisplaySecs(stages.last.totalSecs).hhmmss }";
+  }
+
+  String get summary {
+    String started = "";
+    String ago = "";
+    if(startTime != null) {
+      started ="${startTime.hour.toString()}:${startTime.minute.toString().padLeft(2,'0')}";
+      Duration dur = DateTime.now().difference(startTime);
+      ago = DisplaySecs(dur.inSeconds).hhmmss;
+    }
+    return "$started $ago";
   }
 
   WallTime() { // Initialization code goes here.
@@ -133,5 +159,6 @@ class WallTime {
 
   void tick([int secs = 1]) {
     this.seconds += secs;
+    if ( startTime == null ) startTime = new DateTime.now();
   }
 }
