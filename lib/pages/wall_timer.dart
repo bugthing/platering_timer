@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:plasteringtimer/services/wall_time.dart';
+import 'package:plasteringtimer/services/wall_timer_heading.dart';
 
 class WallTimer extends StatefulWidget {
   @override
@@ -48,7 +49,11 @@ class _WallTimerState extends State<WallTimer> {
       return Column(children: <Widget>[
         Text(
           stage.title, 
-          style: TextStyle(color: stage.isActive ? Colors.green : (stage.hasExpired ? Colors.grey : Colors.purple), fontSize: 20.0),
+          style: TextStyle(
+            color: stage.isActive ? Colors.green : (stage.hasExpired ? Colors.grey : Colors.purple), 
+            fontSize: 20.0,
+            backgroundColor: Colors.lightBlue[50],
+           ),
         ),
         Text(
           stage.summary,
@@ -66,16 +71,9 @@ class _WallTimerState extends State<WallTimer> {
       body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              title: Container(
-                child: Column(
-                  children: [
-                    Text( "${wall.countDown}"),
-                    Text( "${wall.summary}"),
-                  ]
-                )
-              ),
+              title: WallTimerHeading(wall: this.wall),
               floating: true,
-              expandedHeight: 100,
+              expandedHeight: 80,
               centerTitle: true,
               stretch: true,
             ),

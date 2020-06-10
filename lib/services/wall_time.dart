@@ -136,14 +136,26 @@ class WallTime {
   String get countDown {
     return "${ DisplaySecs(seconds).hhmmss } / ${ DisplaySecs(stages.last.totalSecs).hhmmss }";
   }
+  
+  String get startedAsString {
+    return "${startTime.hour.toString()}:${startTime.minute.toString().padLeft(2,'0')}";
+  }
+
+  String get durationAsString {
+    Duration dur = DateTime.now().difference(startTime);
+    return DisplaySecs(dur.inSeconds).hhmmss;
+  }
+
+  bool get started {
+    return (startTime != null);
+  }
 
   String get summary {
     String started = "";
     String ago = "";
-    if(startTime != null) {
-      started ="${startTime.hour.toString()}:${startTime.minute.toString().padLeft(2,'0')}";
-      Duration dur = DateTime.now().difference(startTime);
-      ago = DisplaySecs(dur.inSeconds).hhmmss;
+    if(this.started) {
+      started = this.startedAsString;
+      ago = this.durationAsString;
     }
     return "$started $ago";
   }
