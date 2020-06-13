@@ -46,6 +46,10 @@ class Stage {
     return data['secs'];
   }
 
+  int get stageNumber {
+    return data['number'];
+  }
+
   int get secondsExpired {
     return secondsPast - (totalSecs - lengthSecs);
   }
@@ -79,7 +83,7 @@ class WallTime {
     {
       "title": "Flattening 1st Coat",
       //"secs": 600
-      "secs": 2
+      "secs": 4
     },
     {
       "title": "Clean Tools and Mix New Plaster",
@@ -121,6 +125,8 @@ class WallTime {
 
   List<Stage> get stages {
     return _stages.map((stage) {
+      int idx = _stages.indexOf(stage);
+      stage['number'] = (idx + 1);
       return new Stage(stage, seconds);
     }).toList();
   }
@@ -130,7 +136,7 @@ class WallTime {
   }
 
   bool get isNewStage {
-    return current.secondsExpired == 1;
+    return current.secondsExpired == 1 && current.stageNumber != 1;
   }
 
   String get countDown {
