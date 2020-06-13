@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audio_cache.dart';
 import 'dart:async';
 import 'package:plasteringtimer/services/wall_time.dart';
 import 'package:plasteringtimer/services/wall_timer_heading.dart';
@@ -13,6 +14,7 @@ class _WallTimerState extends State<WallTimer> {
   WallTime wall = WallTime();
   Map data = {};
   Timer _timer;
+  static AudioCache _player = AudioCache();
 
   void startTimer() {
     const oneSec = const Duration(seconds: 1);
@@ -43,6 +45,7 @@ class _WallTimerState extends State<WallTimer> {
 
     if ( wall.isNewStage ) {
       print("Play sounds, just moved onto next stage");
+      _player.play('sound/alarm.mp3');
     }
 
     List<Widget> rows = wall.stages.map((stage) {

@@ -130,7 +130,7 @@ class WallTime {
   }
 
   bool get isNewStage {
-    return current.secondsExpired == 0;
+    return current.secondsExpired == 1;
   }
 
   String get countDown {
@@ -148,16 +148,6 @@ class WallTime {
 
   bool get started {
     return (startTime != null);
-  }
-
-  String get summary {
-    String started = "";
-    String ago = "";
-    if(this.started) {
-      started = this.startedAsString;
-      ago = this.durationAsString;
-    }
-    return "$started $ago";
   }
 
   WallTime() { // Initialization code goes here.
