@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'dart:async';
 import 'package:plasteringtimer/services/wall_time.dart';
-import 'package:plasteringtimer/services/wall_timer_heading.dart';
+import 'package:plasteringtimer/components/wall_timer_heading.dart';
+import 'package:plasteringtimer/components/stage_row.dart';
 
 class WallTimer extends StatefulWidget {
   @override
@@ -48,22 +49,7 @@ class _WallTimerState extends State<WallTimer> {
       _player.play('sound/alarm.mp3');
     }
 
-    List<Widget> rows = wall.stages.map((stage) {
-      return Column(children: <Widget>[
-        Text(
-          stage.title, 
-          style: TextStyle(
-            color: stage.isActive ? Colors.green : (stage.hasExpired ? Colors.grey : Colors.purple), 
-            fontSize: 20.0,
-            backgroundColor: Colors.lightBlue[50],
-           ),
-        ),
-        Text(
-          stage.summary,
-          style: TextStyle(color: stage.isActive ? Colors.black : Colors.grey, fontSize: 20.0)
-        ),
-      ]);
-    }).toList();
+    List<StageRow> rows = wall.stages.map((stage) { return StageRow(stage: stage); }).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -71,24 +57,31 @@ class _WallTimerState extends State<WallTimer> {
           centerTitle: true,
           backgroundColor: Colors.blue[600]
       ),
-      body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              title: WallTimerHeading(wall: this.wall),
-              floating: true,
-              expandedHeight: 80,
-              centerTitle: true,
-              stretch: true,
-            ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (index >= rows.length) return null;
-                  return rows[index];
-               },
-              )
-            ),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/plaster-wall.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                title: WallTimerHeading(wall: this.wall),
+                floating: true,
+                expandedHeight: 80,
+                centerTitle: true,
+              ),
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (BuildContext context, int index) {
+                    if (index >= rows.length) return null;
+                    return rows[index];
+                 },
+                )
+              ),
+            ],
+          ),
         ),
       floatingActionButton:Stack(
         children: <Widget>[
